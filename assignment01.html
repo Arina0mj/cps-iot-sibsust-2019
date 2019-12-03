@@ -12,6 +12,15 @@
 <br>
 <button id="buttonOn2" onClick="on2()">On 2</button>
 <button id="buttonOff2" onClick="off2()">Off 2</button>
+<br>
+<button id="buttonOn3" onClick="on3()">On 3</button>
+<button id="buttonOff3" onClick="off3()">Off 3</button>
+<br>
+<button id="buttonOn4" onClick="on4()">On 4</button>
+<button id="buttonOff4" onClick="off4()">Off 4</button>
+<br>
+<button id="buttonOn5" onClick="on5()">All ON</button>
+<button id="buttonOff5" onClick="off5()">All OFF</button>
 
 <br>
 
@@ -33,6 +42,27 @@ function on2() { // when button "on" is pressed we
 
 function off2() { // when button "off" is pressed we
     ws.send("2"); // send number 2 via websocket
+}
+function on3() { // when button "on" is pressed we
+    ws.send("5"); // send number 3 via websocket
+}
+
+function off3() { // when button "off" is pressed we
+    ws.send("4"); // send number 2 via websocket
+}
+function on4() { // when button "on" is pressed we
+    ws.send("7"); // send number 3 via websocket
+}
+
+function off4() { // when button "off" is pressed we
+    ws.send("6"); // send number 2 via websocket
+}
+function on5() { // when button "on" is pressed we
+    ws.send("9"); // send number 3 via websocket
+}
+
+function off5() { // when button "off" is pressed we
+    ws.send("8"); // send number 2 via websocket
 }
     
 </script>
