@@ -2,11 +2,7 @@
 <meta charset = utf8>
 <html>
     
-<head>
-    <title>Example with buttons</title>
-</head>    
-
-<style>
+    <style>
     .button {
         background-color: #4CAF50;
         border: none;
@@ -19,10 +15,15 @@
         cursor: pointer;
     }
 </style>
+    
+<head>
+    <title>Example with buttons</title>
+</head>    
 
 <body>
 <button id="buttonOn1" class="button" onClick="on1()">On 1</button>
 <button id="buttonOff1" class="button" onClick="off1()">Off 1</button>
+<br>
 <button id="buttonOn2" class="button" onClick="on2()">On 2</button>
 <button id="buttonOff2" class="button" onClick="off2()">Off 2</button>
 
@@ -47,7 +48,6 @@ function on2() { // when button "on" is pressed we
 function off2() { // when button "off" is pressed we
     ws.send("2"); // send number 2 via websocket
 }
-    
 </script>
     
 </body>    

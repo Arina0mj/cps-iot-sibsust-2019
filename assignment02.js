@@ -12,7 +12,7 @@ var board = new firmata.Board("/dev/ttyACM0", function(){ // ACM Abstract Contro
 });
 
 function handler(req, res) {
-    fs.readFile(__dirname + "/assignment01.html",
+    fs.readFile(__dirname + "/assignment02.html",
     function (err, data) {
         if (err) {
             res.writeHead(500, {"Content-Type": "text/plain"});
@@ -40,30 +40,6 @@ wss.on('connection', function (ws) { // start of wss code
     case "2":
         board.digitalWrite(8, board.LOW); // write low on pin 8
     break;
-    case "5":
-        board.digitalWrite(12, board.HIGH); // write high on pin 13
-    break;
-    case "4":
-        board.digitalWrite(12, board.LOW); // write low on pin 13
-    break;
-    case "7":
-        board.digitalWrite(9, board.HIGH); // write high on pin 8
-    break;
-    case "6":
-        board.digitalWrite(9, board.LOW); // write low on pin 8
-    break;      
-    case "9":
-       { board.digitalWrite(8, board.HIGH);
-        board.digitalWrite(13, board.HIGH);
-        board.digitalWrite(12, board.HIGH);
-        board.digitalWrite(9, board.HIGH);}// write high on pin 8
-    break;
-    case "8":
-       { board.digitalWrite(8, board.LOW);
-        board.digitalWrite(13, board.LOW);
-        board.digitalWrite(12, board.LOW);
-        board.digitalWrite(9, board.LOW); }// write low on pin 8
-    break;    
 }
     });
 }); // end of wss code
