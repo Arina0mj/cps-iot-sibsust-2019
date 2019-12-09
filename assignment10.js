@@ -54,7 +54,7 @@ var desiredValue = 0; // desired value var
 var actualValue = 0; // variable for actual value (output value)
 
 var pwm;
-var factor = 0.5; // proportional factor that determines the speed of aproaching toward desired value
+var factor = 0.3; // proportional factor that determines the speed of aproaching toward desired value
 
 http.listen(8080); // server will listen on port 8080
 
@@ -96,6 +96,17 @@ function controlAlgorithm () {
     if (pwm > 0) {board.digitalWrite(2,1); board.digitalWrite(4,0);}; // določimo smer če je > 0
     if (pwm < 0) {board.digitalWrite(2,0); board.digitalWrite(4,1);}; // določimo smer če je < 0
     board.analogWrite(3, Math.abs(pwm));
+    
+    if(actualValue > 890 || actualValue < 147) {
+        stopControlAlgorithm();
+       board.digitalWrite(13,1);
+       board.digitalWrite(13, board.HIGH);
+    }
+    else
+    {
+        board.digitalWrite(13,0)
+       board.digitalWrite(13, board.LOW);
+    }
 };
 
 function startControlAlgorithm () {

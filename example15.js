@@ -13,14 +13,6 @@ wss.broadcast = function broadcast(data) {
   });
 };
 
-wss.sendToLastWs = function sendToLastWs(data) {
-    if (wss.clients[wss.clients.length-1] !== undefined) { // if websocket exist
-        if (wss.clients[wss.clients.length-1].readyState === WebSocket.OPEN) { // if it is connected
-            wss.clients[wss.clients.length-1].send(data); // send to the last connected client - to only one client's websocket
-        }
-    }
-};
-
 var messageJSON;
 
 var controlAlgorithmStartedFlag = 0; // variable for indicating weather the Alg has benn sta.
@@ -39,7 +31,7 @@ var board = new firmata.Board("/dev/ttyACM0", function(){
 });
 
 function handler(req, res) {
-    fs.readFile(__dirname + "/example14.html",
+    fs.readFile(__dirname + "/example15.html",
     function (err, data) {
         if (err) {
             res.writeHead(500, {"Content-Type": "text/plain"});
@@ -53,8 +45,18 @@ function handler(req, res) {
 var desiredValue = 0; // desired value var
 var actualValue = 0; // variable for actual value (output value)
 
-var pwm;
-var factor = 0.5; // proportional factor that determines the speed of aproaching toward desired value
+var Kp = 0.55; // proportional factor of PID controller
+var Ki = 0.008; // integral factor of PID controller
+var Kd = 0.15; // differential factor of PID controller
+
+var factor = 0.3; // proportional factor that determines speed of resonse
+var pwm = 0; // set pwm as global variable
+var pwmLimit = 254; // to limit value of the pwm that is sent to the motor
+
+var err = 0; // error
+var errSum = 0; // sum of errors as integral
+var dErr = 0; // difference of error
+var lastErr = 0; // to keep the value of previous error to estimate derivative
 
 http.listen(8080); // server will listen on port 8080
 
@@ -90,16 +92,26 @@ board.on("ready", function() {
 }); // end of board.on(ready)
 
 function controlAlgorithm () {
-    pwm = factor*(desiredValue-actualValue);
-    if(pwm > 255) {pwm = 255}; // to limit the value for pwm / positive
-    if(pwm < -255) {pwm = -255}; // to limit the value for pwm / negative
-    if (pwm > 0) {board.digitalWrite(2,1); board.digitalWrite(4,0);}; // določimo smer če je > 0
-    if (pwm < 0) {board.digitalWrite(2,0); board.digitalWrite(4,1);}; // določimo smer če je < 0
+    err = desiredValue - actualValue; // error as difference between desired and actual val.
+    errSum += err; // sum of errors | like integral
+    dErr = err - lastErr; // difference of error
+    pwm = Kp*err+Ki*errSum+Kd*dErr; // PID expression
+    lastErr = err; // save the value of error for next cycle to estimate the derivative
+    if(pwm > pwmLimit) {pwm = pwmLimit}; // to limit the value for pwm / positive
+    if(pwm < -pwmLimit) {pwm = -pwmLimit}; // to limit the value for pwm / negative
+    if (pwm > 0) {board.digitalWrite(2,1); board.digitalWrite(4,0);}; // determine direction if > 0
+    if (pwm < 0) {board.digitalWrite(2,0); board.digitalWrite(4,1);}; // determine direction if < 0
     board.analogWrite(3, Math.abs(pwm));
 };
 
 function startControlAlgorithm () {
     if (controlAlgorithmStartedFlag == 0) {
+        // reset parameters
+        pwm = 0; // Reset Pulse Width Modulation value
+        err = 0; // Reset error
+        errSum = 0; // Reset sum of errors as integral
+        dErr = 0; // Reset difference of error
+        lastErr = 0; // Reset value whih keeps the value of previous error to estimate derivative
         controlAlgorithmStartedFlag = 1;
         intervalCtrl = setInterval(function(){controlAlgorithm();}, 30); // call the alg. on 30ms
         console.log("Control algorithm has been started.");        
